@@ -150,11 +150,11 @@ def clean_splits(raw_splits: dict[str, pd.DataFrame]) -> tuple[dict[str, pd.Data
             "אך לא ניתן לאמת קבצים פגומים או כפילויות ויזואליות. "
             "יש להניח את התמונות תחת data/raw/<room_type>/<style>/<filename>.jpg"
         )
-        print("[ניקוי] אזהרה: תמונות לא נמצאו. ראו את הדוח.")
-    else:
-        print(f"[ניקוי] שורש תמונות: {image_root}")
+        print("[Cleanup] Warning: Images not found. See the report.")
+    elif:
+        print(f"[Cleanup] Image root: {image_root}")
 
-    # --- 1. ערכים חסרים / ריקים ---
+    # --- 1. Missing/empty values ---
     before = _counts(splits)
     removed_total = 0
     for key in ("train", "val", "test"):
@@ -421,5 +421,5 @@ def clean_splits(raw_splits: dict[str, pd.DataFrame]) -> tuple[dict[str, pd.Data
             index=False,
             encoding="utf-8",
         )
-    print("[ניקוי] סיכום ספירות אחרי ניקוי:", _counts(splits))
+    print("[Cleanup] Summary of counts after cleaning:", _counts(splits))
     return splits, report

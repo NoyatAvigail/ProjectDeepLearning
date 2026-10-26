@@ -110,7 +110,7 @@ def train_one_experiment(
         else:
             patience_left -= 1
             if patience_left <= 0:
-                print(f"[{experiment_id}] Early Stopping ב-epoch {epoch}")
+                print(f"[{experiment_id}] Early Stopping at epoch {epoch}")
                 break
 
     history_path = MODELS_DIR / f"{experiment_id}_history.json"

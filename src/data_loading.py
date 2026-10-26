@@ -106,9 +106,9 @@ def load_raw_splits() -> dict[str, pd.DataFrame]:
         json.dumps(mapping, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
-    print(f"[טעינה] train={len(splits['train'])}, val={len(splits['val'])}, "
+    print(f"[Loading] train={len(splits['train'])}, val={len(splits['val'])}, "
           f"test={len(splits['test'])}, metadata={len(splits['metadata'])}")
-    print(f"[טעינה] מספר מחלקות מתוך הנתונים: {len(mapping)}")
+    print(f"[Loading] Number of classes from the data: {len(mapping)}")
     return splits
 
 
@@ -145,7 +145,7 @@ def build_image_index(image_root: Path) -> dict[str, Path]:
             index.setdefault(path.name, path)
     _IMAGE_INDEX = index
     _IMAGE_INDEX_ROOT = image_root
-    print(f"[טעינה] נבנה אינדקס תמונות: {len(index)} קבצים תחת {image_root}")
+    print(f"[Loading] Built image index: {len(index)} files under {image_root}")
     return index
 
 

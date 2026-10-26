@@ -103,7 +103,7 @@ def _save_cleaning_table(report) -> None:
 
 
 def run_analysis() -> tuple[dict[str, pd.DataFrame], dict[str, pd.DataFrame], dict]:
-    print("=== שלב טעינת נתונים ===")
+    print("=== Loading data step ===")
     raw = load_raw_splits()
     mapping = {
         int(k): v
@@ -111,25 +111,25 @@ def run_analysis() -> tuple[dict[str, pd.DataFrame], dict[str, pd.DataFrame], di
     }
     plot_class_distribution(
         raw["train"],
-        "התפלגות מחלקות ב-Train לפני ניקוי",
+        "Class distribution in Train before cleaning",
         "class_distribution_train_before_cleaning.png",
     )
     plot_class_distribution(
         pd.concat([raw["train"], raw["val"]], ignore_index=True),
-        "התפלגות מחלקות ב-Train+Val לפני ניקוי (זיהוי חוסר איזון)",
+        "Class distribution in Train+Val before cleaning (identifying imbalance)",
         "class_distribution_before_cleaning.png",
     )
 
-    print("=== שלב ניקוי נתונים ===")
+    print("=== Data cleaning step ===")
     cleaned, report = clean_splits(raw)
     plot_class_distribution(
         cleaned["train"],
-        "התפלגות מחלקות ב-Train אחרי ניקוי",
+        "Class distribution in Train after cleaning",
         "class_distribution_train_after_cleaning.png",
     )
     plot_class_distribution(
         pd.concat([cleaned["train"], cleaned["val"]], ignore_index=True),
-        "התפלגות מחלקות ב-Train+Val אחרי ניקוי",
+        "Class distribution in Train+Val after cleaning",
         "class_distribution_after_cleaning.png",
     )
     _save_cleaning_table(report)
@@ -161,14 +161,14 @@ def run_training(args: argparse.Namespace, raw, cleaned, mapping) -> None:
     results = []
 
     for exp_id, spec in EXPERIMENTS.items():
-        print(f"\n=== ניסוי {exp_id}: {spec['title']} ===")
+        print(f"\n=== Experiment {exp_id}: {spec['title']} ===")
         frames = cleaned if spec["use_cleaned"] else raw
         train_df = _subsample_per_class(frames["train"], args.max_per_class)
         val_df = _subsample_per_class(frames["val"], args.max_per_class)
         test_df = _subsample_per_class(frames["test"], args.max_per_class)
         if args.max_per_class:
             print(
-                f"[{exp_id}] מצב בדיקה: max_per_class={args.max_per_class} "
+                f"[{exp_id}] Test state: max_per_class={args.max_per_class} "
                 f"train={len(train_df)} val={len(val_df)} test={len(test_df)}"
             )
 
@@ -294,7 +294,7 @@ def run_training(args: argparse.Namespace, raw, cleaned, mapping) -> None:
     comparison["target_met_on_validation"] = bool(val_ok)
     comparison["target_met_on_test"] = bool(test_ok)
     if not comparison["valid_for_assignment_claim"]:
-        print("[אזהרה] זו הרצת בדיקה. המדדים אינם תקפים ליעד השיפור של 15%.")
+        print("[warning] This is a test run. The metrics are not valid for the 15% improvement target.")
     if not (val_ok or test_ok):
         comparison["next_steps_if_target_missed"] = [
             "להאריך את האימון עם יותר epochs ועם patience רחב יותר.",
@@ -323,11 +323,11 @@ def run_training(args: argparse.Namespace, raw, cleaned, mapping) -> None:
         ),
         encoding="utf-8",
     )
-    print("\n=== סיכום שיפור מול Baseline (Validation) ===")
+    print("\n=== summary of improvement vs Baseline (Validation) ===")
     print(json.dumps(comparison["validation"], ensure_ascii=False, indent=2))
-    print("=== Test לפרוטוקול שנקבע מראש ===")
+    print("=== Test for the protocol set in advance ===")
     print(json.dumps(comparison["test"], ensure_ascii=False, indent=2))
-    print(f"דוחות נשמרו ב: {REPORTS_DIR}")
+    print(f"Reports saved in: {REPORTS_DIR}")
 
 
 def run(args: argparse.Namespace) -> int:
@@ -336,7 +336,7 @@ def run(args: argparse.Namespace) -> int:
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     raw, cleaned, mapping = run_analysis()
     if args.skip_train:
-        print("דולג אימון לפי --skip-train. הדוחות והגרפים ברמת CSV נשמרו ב-outputs/")
+        print("Skipping training due to --skip-train. The reports and graphs at the CSV level are saved in outputs/")
         return 0
     run_training(args, raw, cleaned, mapping)
     return 0

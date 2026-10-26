@@ -38,9 +38,9 @@ def get_device() -> Any:
         if torch.cuda.is_available():
             device = torch.device("cuda")
             name = torch.cuda.get_device_name(0)
-            print(f"[חומרה] GPU זמין: {name}")
+            print(f"[Hardware] GPU available: {name}")
             return device
-        print("[חומרה] לא נמצא GPU. האימון ירוץ על CPU ויהיה איטי יותר.")
+        print("[Hardware] No GPU found. The training will run on CPU and will be slower.")
         return torch.device("cpu")
     except ImportError as exc:
         raise ImportError(

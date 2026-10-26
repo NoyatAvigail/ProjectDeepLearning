@@ -25,7 +25,7 @@ def _save(fig: plt.Figure, name: str) -> Path:
     fig.tight_layout()
     fig.savefig(path, dpi=160, bbox_inches="tight")
     plt.close(fig)
-    print(f"[ויזואליזציה] נשמר: {path}")
+    print(f"[Visualization] Saved: {path}")
     return path
 
 
